@@ -49,7 +49,6 @@ const App: React.FC = () => {
       {state === 'assessment' && (
         <AssessmentEngine 
           grade={selectedGrade} 
-          difficulty={selectedDiff} 
           childName={childName}
           onComplete={handleAssessmentComplete}
           onCancel={handleCancel}

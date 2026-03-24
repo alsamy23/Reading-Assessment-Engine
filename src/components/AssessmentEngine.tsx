@@ -15,7 +15,7 @@ interface AssessmentEngineProps {
 
 type PassageMode = 'automated' | 'custom';
 
-const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, difficulty, childName, onComplete, onCancel }) => {
+const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, onComplete, onCancel }) => {
   const [mode, setMode] = useState<PassageMode>('automated');
   const [autoPassage, setAutoPassage] = useState<any>(null);
   const [customText, setCustomText] = useState('');
