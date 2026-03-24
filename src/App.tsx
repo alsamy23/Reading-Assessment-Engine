@@ -13,7 +13,7 @@ const App: React.FC = () => {
   const [selectedGrade, setSelectedGrade] = useState('Grade 1');
   const [result, setResult] = useState<AssessmentResult | null>(null);
 
-  const startAssessment = (grade: string, difficulty: string, name: string) => {
+  const startAssessment = (grade: string, name: string) => {
     setSelectedGrade(grade);
     setChildName(name);
     setState('assessment');

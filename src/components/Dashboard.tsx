@@ -112,7 +112,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartAssessment }) => {
                 alert("Please enter the child's name first.");
                 return;
               }
-              onStartAssessment(selectedGrade, selectedDiff, childName);
+              onStartAssessment(selectedGrade, childName);
             }}
           >
             Start Assessment →
