@@ -4,7 +4,7 @@ import { getAverageScore, getHistory, getProgressTrend } from '../services/histo
 import type { HistoryRecord } from '../services/historyService';
 
 interface DashboardProps {
-  onStartAssessment: (grade: string, difficulty: string, childName: string) => void;
+  onStartAssessment: (grade: string, childName: string) => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ onStartAssessment }) => {
