@@ -11,7 +11,6 @@ const App: React.FC = () => {
   const [state, setState] = useState<AppState>('dashboard');
   const [childName, setChildName] = useState('');
   const [selectedGrade, setSelectedGrade] = useState('Grade 1');
-  const [selectedDiff, setSelectedDiff] = useState('Medium');
   const [result, setResult] = useState<AssessmentResult | null>(null);
 
   const startAssessment = (grade: string, difficulty: string, name: string) => {
