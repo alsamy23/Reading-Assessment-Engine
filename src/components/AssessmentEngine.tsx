@@ -7,7 +7,6 @@ import passagesData from '../data/passages.json';
 
 interface AssessmentEngineProps {
   grade: string;
-  difficulty: string;
   childName: string;
   onComplete: (result: AssessmentResult) => void;
   onCancel: () => void;

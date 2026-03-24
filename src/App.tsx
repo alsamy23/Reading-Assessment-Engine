@@ -15,7 +15,6 @@ const App: React.FC = () => {
 
   const startAssessment = (grade: string, difficulty: string, name: string) => {
     setSelectedGrade(grade);
-    setSelectedDiff(difficulty);
     setChildName(name);
     setState('assessment');
   };
