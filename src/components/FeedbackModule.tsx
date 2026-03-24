@@ -16,24 +16,29 @@ const FeedbackModule: React.FC<FeedbackModuleProps> = ({ result, childName, onFi
   const handleReadAloud = () => {
     if (!guidedText) return;
     
-    // Cancel any ongoing speech
+    // Stop any current speaking
     window.speechSynthesis.cancel();
     
-    const speak = () => {
-      const speech = new SpeechSynthesisUtterance(guidedText.replace(/\//g, ""));
+    const speakAction = () => {
+      const utterance = new SpeechSynthesisUtterance(guidedText.replace(/\//g, ""));
       const voices = window.speechSynthesis.getVoices();
-      const enVoice = voices.find(v => v.lang.includes('en-US') || v.lang.includes('en-GB')) || voices[0];
-      if (enVoice) speech.voice = enVoice;
       
-      speech.rate = 0.85;
-      speech.pitch = 1.0;
-      window.speechSynthesis.speak(speech);
+      // Preference for female English voice if available (often feels more natural for education)
+      const targetVoice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Female')) 
+                       || voices.find(v => v.lang.startsWith('en'))
+                       || voices[0];
+                       
+      if (targetVoice) utterance.voice = targetVoice;
+      utterance.rate = 0.85;
+      utterance.pitch = 1.0;
+      
+      window.speechSynthesis.speak(utterance);
     };
 
     if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = speak;
+      window.speechSynthesis.onvoiceschanged = speakAction;
     } else {
-      speak();
+      speakAction();
     }
   };
 

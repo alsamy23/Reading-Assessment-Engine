@@ -17,12 +17,23 @@ export interface AssessmentResult {
 }
 
 export const evaluateReading = (original: string, attempt: string, guided: string): AssessmentResult => {
-  const originalWords = original.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(/\s+/);
-  const attemptWords = attempt.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(/\s+/);
+  const originalWords = original.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(/\s+/).filter(w => w.length > 0);
+  const attemptWords = attempt.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(/\s+/).filter(w => w.length > 0);
 
   let correctCount = 0;
   const mistakes: string[] = [];
   const matchedIndices = new Set<number>();
+
+  if (attemptWords.length === 0) {
+    return {
+      score: { accuracy: 0, fluency: 0, pronunciation: 0, expression: 0, total: 0 },
+      level: 'Beginner',
+      mistakes: originalWords,
+      feedback: ["No reading attempt detected. Please try reading the passage aloud."],
+      recommendation: "Easier text",
+      guidedText: guided
+    };
+  }
 
   // Better word matching using a sliding window to handle omissions/insertions
   attemptWords.forEach((attemptWord) => {

@@ -4,6 +4,7 @@ import { evaluateReading } from '../services/assessmentService';
 import type { AssessmentResult } from '../services/assessmentService';
 import { saveHistory } from '../services/historyService';
 import passagesData from '../data/passages.json';
+import { analyzeReadingWithAI } from '../services/geminiService';
 
 interface AssessmentEngineProps {
   grade: string;
@@ -19,6 +20,8 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
   const [autoPassage, setAutoPassage] = useState<any>(null);
   const [customText, setCustomText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [useAI, setUseAI] = useState(false);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [timer, setTimer] = useState(0);
   const timerRef = useRef<any>(null);
@@ -44,7 +47,7 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
     // For this simulation, we still need the transcript box to be filled.
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const activeText = mode === 'automated' ? autoPassage.content : customText;
     const guidedText = mode === 'automated' ? autoPassage.guided : activeText;
 
@@ -57,7 +60,29 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
       return;
     }
 
-    const result = evaluateReading(activeText, transcript, guidedText);
+    let result = evaluateReading(activeText, transcript, guidedText);
+
+    if (useAI) {
+      setIsLoadingAI(true);
+      try {
+        const aiResult = await analyzeReadingWithAI({
+          originalText: activeText,
+          transcription: transcript,
+          grade: grade
+        });
+        // Merge AI feedback with rule-based scoring
+        result = {
+          ...result,
+          feedback: [...result.feedback, ...(aiResult.feedback || [])],
+          recommendation: aiResult.recommendation || result.recommendation
+        };
+      } catch (err) {
+        console.error("AI Analysis failed:", err);
+      } finally {
+        setIsLoadingAI(false);
+      }
+    }
+
     saveHistory({
       childName: childName,
       grade: mode === 'automated' ? autoPassage.grade : 'Custom',
@@ -173,7 +198,13 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
       </div>
 
       <div className="glass-card">
-        <h3 style={{ marginBottom: '1rem' }}>Step 2: Submit Reading Effort</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h3 style={{ margin: 0 }}>Step 2: Submit Reading Effort</h3>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem' }}>
+            <input type="checkbox" checked={useAI} onChange={(e) => setUseAI(e.target.checked)} />
+            ✨ Use AI Assessment (Beta)
+          </label>
+        </div>
         <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '0.875rem' }}>
           After reading, paste the transcription or simulated attempt below to get AI feedback.
         </p>
@@ -194,8 +225,13 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
           }}
         />
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <button className="btn-primary" onClick={handleSubmit} disabled={isRecording} style={{ width: '100%', padding: '1rem' }}>
-            Submit for Final Result →
+          <button 
+            className="btn-primary" 
+            onClick={handleSubmit} 
+            disabled={isRecording || isLoadingAI} 
+            style={{ width: '100%', padding: '1rem' }}
+          >
+            {isLoadingAI ? '🤖 AI Analyzing...' : 'Submit for Final Result →'}
           </button>
         </div>
       </div>
