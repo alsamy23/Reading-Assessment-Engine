@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { evaluateReading } from '../services/assessmentService';
 import type { AssessmentResult } from '../services/assessmentService';
@@ -20,7 +19,7 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
   const [autoPassage, setAutoPassage] = useState<any>(null);
   const [customText, setCustomText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
-  const [useAI, setUseAI] = useState(false);
+  const [useAI, setUseAI] = useState(true);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [timer, setTimer] = useState(0);
@@ -43,8 +42,6 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
   const stopRecording = () => {
     setIsRecording(false);
     clearInterval(timerRef.current);
-    // User requested that once they stop reading, we're ready to submit.
-    // For this simulation, we still need the transcript box to be filled.
   };
 
   const handleSubmit = async () => {
@@ -70,7 +67,6 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
           transcription: transcript,
           grade: grade
         });
-        // Merge AI feedback with rule-based scoring
         result = {
           ...result,
           feedback: [...result.feedback, ...(aiResult.feedback || [])],
@@ -86,7 +82,7 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
     saveHistory({
       childName: childName,
       grade: mode === 'automated' ? autoPassage.grade : 'Custom',
-      score: result.score.total,
+      score: result.score.band, // Save Band as the primary score now
       level: result.level
     });
     onComplete(result);
@@ -98,55 +94,63 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
     <div className="container animate-fade-in" style={{ maxWidth: '900px' }}>
       <button 
         onClick={onCancel} 
-        style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+        className="btn-secondary"
+        style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none' }}
       >
         ← Back to Dashboard
       </button>
 
-      <div className="glass-card" style={{ marginBottom: '2rem', padding: '1rem' }}>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+      <section style={{ marginBottom: '2rem' }}>
+         <h1 className="text-gradient" style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Speaking Assessment</h1>
+         <div className="badge badge-purple">IELTS Speaking Standards (Part 1: Read Aloud)</div>
+      </section>
+
+      <div className="glass-card" style={{ marginBottom: '2rem', padding: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
           <button 
             onClick={() => setMode('automated')}
             style={{ 
               flex: 1, 
-              padding: '1rem', 
-              borderRadius: '12px', 
+              padding: '0.875rem', 
+              borderRadius: '16px', 
               border: 'none', 
-              background: mode === 'automated' ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+              background: mode === 'automated' ? 'var(--primary)' : 'rgba(255,255,255,0.03)',
               color: 'white',
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              transition: 'var(--transition)'
             }}
           >
-            Default Passage ({grade})
+            Level: {grade}
           </button>
           <button 
             onClick={() => setMode('custom')}
             style={{ 
               flex: 1, 
-              padding: '1rem', 
-              borderRadius: '12px', 
+              padding: '0.875rem', 
+              borderRadius: '16px', 
               border: 'none', 
-              background: mode === 'custom' ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+              background: mode === 'custom' ? 'var(--primary)' : 'rgba(255,255,255,0.03)',
               color: 'white',
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              transition: 'var(--transition)'
             }}
           >
-            Paste Custom Text
+            Custom Text
           </button>
         </div>
       </div>
 
-      <div className="glass-card" style={{ marginBottom: '2rem' }}>
+      <div className="glass-card" style={{ marginBottom: '2.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.5rem', color: 'white' }}>
+          <h2 style={{ fontSize: '1.5rem', color: 'white', margin: 0 }}>
             {mode === 'automated' ? autoPassage.title : 'Custom Reading Task'}
           </h2>
           {isRecording && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: '#ef4444' }}>
               <div className="pulse-dot" />
-              <span style={{ fontWeight: 600 }}>{Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}</span>
+              <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>{Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}</span>
             </div>
           )}
         </div>
@@ -156,11 +160,12 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
             fontSize: '1.5rem', 
             lineHeight: '1.8', 
             color: 'var(--text-main)', 
-            padding: '2rem', 
-            background: 'rgba(15, 23, 42, 0.5)', 
-            borderRadius: '15px',
+            padding: '2.5rem', 
+            background: 'rgba(5, 1, 26, 0.4)', 
+            borderRadius: '20px',
             marginBottom: '2rem',
-            textAlign: 'center'
+            textAlign: 'center',
+            border: '1px solid var(--glass-border)'
           }}>
             {autoPassage.content}
           </div>
@@ -173,8 +178,8 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
               width: '100%', 
               minHeight: '200px', 
               padding: '1.5rem', 
-              borderRadius: '15px', 
-              background: 'rgba(15, 23, 42, 0.5)', 
+              borderRadius: '20px', 
+              background: 'rgba(5, 1, 26, 0.4)', 
               color: 'white', 
               border: '1px solid var(--glass-border)',
               fontSize: '1.25rem',
@@ -186,67 +191,60 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
 
         <div style={{ textAlign: 'center' }}>
           {!isRecording ? (
-            <button className="btn-primary" onClick={startRecording} style={{ padding: '1rem 4rem', fontSize: '1.25rem' }}>
-              🎤 Start Reading
+            <button className="btn-primary" onClick={startRecording} style={{ padding: '1rem 4rem' }}>
+              🎤 Start Microphone
             </button>
           ) : (
-            <button className="btn-primary" onClick={stopRecording} style={{ padding: '1rem 4rem', fontSize: '1.25rem', background: '#ef4444' }}>
-              ⏹ Stop Reading
+            <button className="btn-primary" onClick={stopRecording} style={{ padding: '1rem 4rem', background: '#ef4444', boxShadow: '0 0 20px rgba(239, 68, 68, 0.4)' }}>
+              ⏹ Stop & Save
             </button>
           )}
         </div>
       </div>
 
       <div className="glass-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h3 style={{ margin: 0 }}>Step 2: Submit Reading Effort</h3>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+          <h3 style={{ margin: 0, color: 'white' }}>Analysis & Feedback</h3>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.9rem' }}>
             <input type="checkbox" checked={useAI} onChange={(e) => setUseAI(e.target.checked)} />
-            ✨ Use AI Assessment (Beta)
+            ✨ AI IELTS Proctoring
           </label>
         </div>
-        <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '0.875rem' }}>
-          After reading, paste the transcription or simulated attempt below to get AI feedback.
-        </p>
+        
         <textarea 
-          placeholder="Type or paste the transcription here..."
+          placeholder="Simulate transcript or paste real-time transcription here..."
           value={transcript}
           onChange={(e) => setTranscript(e.target.value)}
           style={{ 
             width: '100%', 
-            minHeight: '100px', 
-            padding: '1rem', 
-            borderRadius: '12px', 
-            background: '#0f172a', 
-            color: 'white', 
-            border: '1px solid var(--glass-border)',
-            fontSize: '1rem',
-            marginBottom: '1.5rem'
+            minHeight: '120px', 
+            marginBottom: '1.5rem',
+            background: 'rgba(0,0,0,0.2)'
           }}
         />
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <button 
-            className="btn-primary" 
-            onClick={handleSubmit} 
-            disabled={isRecording || isLoadingAI} 
-            style={{ width: '100%', padding: '1rem' }}
-          >
-            {isLoadingAI ? '🤖 AI Analyzing...' : 'Submit for Final Result →'}
-          </button>
-        </div>
+        
+        <button 
+          className="btn-primary" 
+          onClick={handleSubmit} 
+          disabled={isRecording || isLoadingAI} 
+          style={{ width: '100%' }}
+        >
+          {isLoadingAI ? '🤖 AI Analyzing IELTS Criteria...' : 'Finalize Assessment →'}
+        </button>
       </div>
 
       <style>{`
         .pulse-dot {
-          width: 12px;
-          height: 12px;
-          borderRadius: 50%;
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
           background: #ef4444;
           animation: pulse 1.5s infinite;
+          box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
         }
         @keyframes pulse {
           0% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.5; transform: scale(1.1); }
+          50% { opacity: 0.4; transform: scale(1.3); }
           100% { opacity: 1; transform: scale(1); }
         }
       `}</style>
