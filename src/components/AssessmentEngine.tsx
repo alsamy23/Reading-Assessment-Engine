@@ -207,8 +207,6 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
           />
         )}
 
-          )}
-        </div>
 
         {questions.length > 0 && (
           <div className="animate-fade-in" style={{ 
