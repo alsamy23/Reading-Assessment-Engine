@@ -3,7 +3,7 @@ import { evaluateReading } from '../services/assessmentService';
 import type { AssessmentResult } from '../services/assessmentService';
 import { saveHistory } from '../services/historyService';
 import passagesData from '../data/passages.json';
-import { analyzeReadingWithAI } from '../services/geminiService';
+import { analyzeReadingWithAI, generateComprehensionQuestions } from '../services/geminiService';
 
 interface AssessmentEngineProps {
   grade: string;
@@ -23,13 +23,31 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [timer, setTimer] = useState(0);
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
   const timerRef = useRef<any>(null);
 
   useEffect(() => {
     const found = passagesData.passages.find(p => p.grade === grade) 
                 || passagesData.passages[0];
     setAutoPassage(found);
+    setQuestions([]); // Clear questions when passage changes
   }, [grade]);
+
+  const handleGenerateQuestions = async () => {
+    const activeText = mode === 'automated' ? autoPassage.content : customText;
+    if (!activeText.trim()) return;
+
+    setIsGeneratingQuestions(true);
+    try {
+      const result = await generateComprehensionQuestions(activeText, grade);
+      setQuestions(result);
+    } catch (err) {
+      console.error("Failed to generate questions:", err);
+    } finally {
+      setIsGeneratingQuestions(false);
+    }
+  };
 
   const startRecording = () => {
     setIsRecording(true);
@@ -189,11 +207,51 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
           />
         )}
 
-        <div style={{ textAlign: 'center' }}>
+          )}
+        </div>
+
+        {questions.length > 0 && (
+          <div className="animate-fade-in" style={{ 
+            marginTop: '2rem', 
+            padding: '1.5rem', 
+            background: 'rgba(139, 92, 246, 0.1)', 
+            borderRadius: '16px',
+            border: '1px solid rgba(139, 92, 246, 0.2)'
+          }}>
+            <h3 style={{ color: 'var(--primary)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              📚 Comprehension Questions
+            </h3>
+            <ul style={{ listStyle: 'none', padding: 0 }}>
+              {questions.map((q, i) => (
+                <li key={i} style={{ 
+                  padding: '0.75rem', 
+                  marginBottom: '0.5rem', 
+                  background: 'rgba(255,255,255,0.03)', 
+                  borderRadius: '10px',
+                  borderLeft: '4px solid var(--primary)'
+                }}>
+                  {q}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '2rem' }}>
           {!isRecording ? (
-            <button className="btn-primary" onClick={startRecording} style={{ padding: '1rem 4rem' }}>
-              🎤 Start Microphone
-            </button>
+            <>
+              <button className="btn-primary" onClick={startRecording} style={{ padding: '1rem 3rem' }}>
+                🎤 Start Microphone
+              </button>
+              <button 
+                className="btn-secondary" 
+                onClick={handleGenerateQuestions} 
+                disabled={isGeneratingQuestions}
+                style={{ borderRadius: '100px', padding: '1rem 2rem' }}
+              >
+                {isGeneratingQuestions ? '🧠 Generating...' : '✨ Prep Questions'}
+              </button>
+            </>
           ) : (
             <button className="btn-primary" onClick={stopRecording} style={{ padding: '1rem 4rem', background: '#ef4444', boxShadow: '0 0 20px rgba(239, 68, 68, 0.4)' }}>
               ⏹ Stop & Save

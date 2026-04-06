@@ -26,3 +26,23 @@ export const analyzeReadingWithAI = async (request: AIAnalysisRequest): Promise<
     }, 1500);
   });
 };
+
+export const generateComprehensionQuestions = async (text: string, grade: string): Promise<string[]> => {
+  // SIMULATION: In a real app, this would be an API call to Gemini
+  // Gemini can generate questions tailored to the text's difficulty and themes.
+  
+  console.log("Gemini Question Generation Request:", { text, grade });
+  
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const genericQuestions = [
+        "What is the main topic of this passage?",
+        "Can you describe one key detail mentioned in the text?",
+        "Based on what you read, what might happen next?",
+        "How would you summarize this passage in your own words?"
+      ];
+      resolve(genericQuestions);
+    }, 1200);
+  });
+};
+
