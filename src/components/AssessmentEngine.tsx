@@ -28,15 +28,21 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
   const timerRef = useRef<any>(null);
 
   useEffect(() => {
+    // Reset questions when anything changes
+    setQuestions([]);
+    
+    // Also update automated passage when grade changes
     const found = passagesData.passages.find(p => p.grade === grade) 
                 || passagesData.passages[0];
     setAutoPassage(found);
-    setQuestions([]); // Clear questions when passage changes
-  }, [grade]);
+  }, [grade, mode, customText]);
 
   const handleGenerateQuestions = async () => {
-    const activeText = mode === 'automated' ? autoPassage.content : customText;
-    if (!activeText.trim()) return;
+    const activeText = mode === 'automated' ? autoPassage?.content : customText;
+    if (!activeText || !activeText.trim()) {
+      alert("Please provide a passage first.");
+      return;
+    }
 
     setIsGeneratingQuestions(true);
     try {
@@ -244,10 +250,19 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
               <button 
                 className="btn-secondary" 
                 onClick={handleGenerateQuestions} 
-                disabled={isGeneratingQuestions}
-                style={{ borderRadius: '100px', padding: '1rem 2rem' }}
+                disabled={isGeneratingQuestions || (mode === 'custom' && !customText.trim())}
+                style={{ 
+                  borderRadius: '100px', 
+                  padding: '1rem 2rem',
+                  opacity: (mode === 'custom' && !customText.trim()) ? 0.5 : 1,
+                  cursor: (mode === 'custom' && !customText.trim()) ? 'not-allowed' : 'pointer'
+                }}
               >
-                {isGeneratingQuestions ? '🧠 Generating...' : '✨ Prep Questions'}
+                {isGeneratingQuestions ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div className="spinner-small" /> Generating...
+                  </span>
+                ) : '✨ Prep Questions'}
               </button>
             </>
           ) : (
@@ -302,6 +317,18 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
           0% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.4; transform: scale(1.3); }
           100% { opacity: 1; transform: scale(1); }
+        }
+        .spinner-small {
+          width: 18px;
+          height: 18px;
+          border: 2px solid rgba(255,255,255,0.3);
+          border-top: 2px solid white;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
       `}</style>
     </div>
