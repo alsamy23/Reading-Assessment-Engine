@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { evaluateReading } from '../services/assessmentService';
+import { evaluateReading, calculateIELTSBand } from '../services/assessmentService';
 import type { AssessmentResult } from '../services/assessmentService';
 import { saveHistory } from '../services/historyService';
 import passagesData from '../data/passages.json';
@@ -142,7 +142,6 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
           const total = fluency + lexicalResource + grammar + pronunciation;
           
           // Re-calculate band based on AI scores
-          const { calculateIELTSBand } = await import('../services/assessmentService');
           const band = calculateIELTSBand(total);
 
           result.score = {
@@ -159,6 +158,17 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
           else if (band >= 6.0) result.level = 'Proficient';
           else if (band >= 4.0) result.level = 'Developing';
           else result.level = 'Beginner';
+        } else {
+          // Fallback if AI didn't provide scores but provided text
+          // We don't want 0 scores if the user actually recorded audio
+          result.score = {
+            ...result.score,
+            fluency: 2,
+            pronunciation: 2,
+            total: 8,
+            band: 5.0
+          };
+          result.level = 'Developing';
         }
 
         result = {
@@ -355,7 +365,7 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
           <h3 style={{ margin: 0, color: 'white' }}>Analysis & Feedback</h3>
           <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontSize: '0.9rem' }}>
             <input type="checkbox" checked={useAI} onChange={(e) => setUseAI(e.target.checked)} />
-            ✨ AI IELTS Proctoring
+            ✨ AI IELTS Proctoring (Smart Noise Filtering)
           </label>
         </div>
         

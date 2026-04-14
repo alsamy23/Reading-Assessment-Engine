@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { calculateIELTSBand } from './assessmentService';
 import type { AssessmentResult } from './assessmentService';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || "";
@@ -46,7 +47,11 @@ export const analyzeReadingWithAI = async (request: AIAnalysisRequest): Promise<
           CRITICAL INSTRUCTION:
           Compare the AUDIO recording directly against the 'PASSAGE TO READ'.
           Carefully evaluate their Pronunciation, Fluency, and how accurately they read the text.
-          If the audio does not match the text, or if the audio is silent/missing, severely penalize the score.
+          
+          NOISE CANCELLATION:
+          Identify the primary human speaker. Ignore background environmental noises like TV, street noise, wind, or other people talking in the distance. Focus ONLY on the clarity and linguistic features of the main speaker.
+          
+          If the audio does not match the text at all, or if the audio is silent, severely penalize the score.
           
           Provide scores (0-4 internal scale for each) and feedback for:
           1. Fluency & Coherence (pacing, hesitations, self-correction)

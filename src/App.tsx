@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import AssessmentEngine from './components/AssessmentEngine';
 import FeedbackModule from './components/FeedbackModule';
+import VideoShowcase from './components/VideoShowcase';
 import type { AssessmentResult } from './services/assessmentService';
 
 type AppState = 'dashboard' | 'assessment' | 'feedback';
@@ -41,7 +42,10 @@ const App: React.FC = () => {
   return (
     <div className="app-root">
       {state === 'dashboard' && (
-        <Dashboard onStartAssessment={startAssessment} />
+        <>
+          <VideoShowcase />
+          <Dashboard onStartAssessment={startAssessment} />
+        </>
       )}
       
       {state === 'assessment' && (
