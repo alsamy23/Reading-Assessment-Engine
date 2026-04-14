@@ -37,16 +37,16 @@ export const analyzeReadingWithAI = async (request: AIAnalysisRequest): Promise<
       {
         text: `
           You are an expert IELTS Speaking examiner. 
+          Listen to the provided AUDIO recording of the student reading the passage aloud.
           Analyze this 'Read Aloud' attempt based on the official IELTS Public Band Descriptors.
           
           PASSAGE TO READ: "${request.originalText}"
-          USER TRANSCRIPT (May be inaccurate): "${request.transcription}"
           LEVEL: ${request.grade}
           
           CRITICAL INSTRUCTION:
-          If audio is provided, prioritize the audio for Pronunciation and Fluency scores. 
-          Check if the user actually SPOKE the passage or if they just pasted text.
-          If they just pasted text without real speech patterns (if audio is silent or missing), penalize the score.
+          Compare the AUDIO recording directly against the 'PASSAGE TO READ'.
+          Carefully evaluate their Pronunciation, Fluency, and how accurately they read the text.
+          If the audio does not match the text, or if the audio is silent/missing, severely penalize the score.
           
           Provide scores (0-4 internal scale for each) and feedback for:
           1. Fluency & Coherence (pacing, hesitations, self-correction)

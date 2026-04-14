@@ -21,7 +21,6 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
   const [isRecording, setIsRecording] = useState(false);
   const [useAI, setUseAI] = useState(true);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
-  const [transcript, setTranscript] = useState('');
   const [timer, setTimer] = useState(0);
   const [questions, setQuestions] = useState<string[]>([]);
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
@@ -106,9 +105,9 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
       return;
     }
     
-    // REQUIREMENT: Prevent submission without recording to fix copy-paste bug
-    if (!audioBlob && !transcript.trim()) {
-      alert("Please record your voice or provide a transcript to analyze.");
+    // REQUIREMENT: Prevent submission without recording
+    if (!audioBlob) {
+      alert("Please record your voice to analyze your speaking.");
       return;
     }
 
@@ -125,14 +124,14 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
       });
     }
 
-    let result = evaluateReading(activeText, transcript, guidedText);
+    let result = evaluateReading(activeText, "", guidedText);
 
     if (useAI) {
       setIsLoadingAI(true);
       try {
         const aiResult = await analyzeReadingWithAI({
           originalText: activeText,
-          transcription: transcript,
+          transcription: "", // Transcription removed, relying entirely on AI audio analysis
           audioBase64: audioBase64,
           grade: grade
         });
@@ -360,17 +359,11 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
           </label>
         </div>
         
-        <textarea 
-          placeholder="Simulate transcript or paste real-time transcription here..."
-          value={transcript}
-          onChange={(e) => setTranscript(e.target.value)}
-          style={{ 
-            width: '100%', 
-            minHeight: '120px', 
-            marginBottom: '1.5rem',
-            background: 'rgba(0,0,0,0.2)'
-          }}
-        />
+        {audioBlob && (
+          <div style={{ padding: '1rem', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '12px', marginBottom: '1.5rem', textAlign: 'center', border: '1px solid rgba(139, 92, 246, 0.3)' }}>
+            <span style={{ color: 'var(--primary)', fontWeight: 600 }}>✓ Audio recorded and ready for AI analysis</span>
+          </div>
+        )}
         
         <button 
           className="btn-primary" 
