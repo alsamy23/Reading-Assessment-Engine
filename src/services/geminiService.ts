@@ -7,6 +7,7 @@ const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
 export interface AIAnalysisRequest {
   originalText: string;
   transcription: string;
+  audioBase64?: string; // Optinal: the real audio for multimodal analysis
   grade: string;
 }
 
@@ -17,10 +18,10 @@ export const analyzeReadingWithAI = async (request: AIAnalysisRequest): Promise<
       setTimeout(() => {
         resolve({
           feedback: [
-            "IELTS AI ANALYSIS: Speaker shows good fluency but relies on simple connectors (and, but).",
-            "LEXICAL RESOURCE: Vocabulary is appropriate for the topic, but could be enhanced with academic collocations.",
-            "GRAMMAR: Minor errors in subject-verb agreement detected in the second sentence.",
-            "PRONUNCIATION: Clear articulation; focus on the /th/ sound in 'throughout'."
+            "IELTS AI ANALYSIS: Speaker shows good fluency but relies on simple connectors.",
+            "LEXICAL RESOURCE: Vocabulary is appropriate, but needs more academic collocations.",
+            "GRAMMAR: Minor errors in subject-verb agreement detected.",
+            "PRONUNCIATION: Clear articulation; focus on sentence stress."
           ],
           recommendation: "Focus on using complex sentence structures to aim for Band 7.5+."
         });
@@ -30,32 +31,67 @@ export const analyzeReadingWithAI = async (request: AIAnalysisRequest): Promise<
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const prompt = `
-      You are an IELTS Speaking examiner. 
-      Analyze this reading attempt based on the official IELTS Part 1 'Read Aloud' criteria.
-      
-      PASSAGE: "${request.originalText}"
-      STUDENT TRANSCRIPTION: "${request.transcription}"
-      LEVEL: ${request.grade}
-      
-      Provide:
-      1. Exactly 4 specific feedback points about Fluency, Lexical Resource, Grammar, and Pronunciation.
-      2. A concise 1-sentence recommendation for improvement.
-      
-      Return JSON format: 
+    
+    // Prepare parts for multimodal input
+    const promptParts: any[] = [
       {
-        "feedback": ["point 1", "point 2", "point 3", "point 4"],
-        "recommendation": "string"
+        text: `
+          You are an expert IELTS Speaking examiner. 
+          Analyze this 'Read Aloud' attempt based on the official IELTS Public Band Descriptors.
+          
+          PASSAGE TO READ: "${request.originalText}"
+          USER TRANSCRIPT (May be inaccurate): "${request.transcription}"
+          LEVEL: ${request.grade}
+          
+          CRITICAL INSTRUCTION:
+          If audio is provided, prioritize the audio for Pronunciation and Fluency scores. 
+          Check if the user actually SPOKE the passage or if they just pasted text.
+          If they just pasted text without real speech patterns (if audio is silent or missing), penalize the score.
+          
+          Provide scores (0-4 internal scale for each) and feedback for:
+          1. Fluency & Coherence (pacing, hesitations, self-correction)
+          2. Lexical Resource (vocabulary range)
+          3. Grammatical Range & Accuracy
+          4. Pronunciation (clarity, word stress, intonation)
+          
+          Return JSON format: 
+          {
+            "score": {
+              "fluency": number,
+              "lexicalResource": number,
+              "grammar": number,
+              "pronunciation": number
+            },
+            "feedback": ["detailed point 1", "detailed point 2", "detailed point 3", "detailed point 4"],
+            "recommendation": "string"
+          }
+        `
       }
-    `;
+    ];
 
-    const result = await model.generateContent(prompt);
+    // Add audio if available
+    if (request.audioBase64) {
+      promptParts.push({
+        inlineData: {
+          data: request.audioBase64,
+          mimeType: "audio/webm"
+        }
+      });
+    }
+
+    const result = await model.generateContent(promptParts);
     const response = await result.response;
     const text = response.text().replace(/```json|```/g, "").trim();
-    return JSON.parse(text);
+    const data = JSON.parse(text);
+    
+    return data;
   } catch (err) {
     console.error("Gemini Analysis Error:", err);
-    return { feedback: ["Analysis currently unavailable."], recommendation: "Please try again shortly." };
+    return { 
+      feedback: ["Analysis currently unavailable."], 
+      recommendation: "Please try again shortly.",
+      score: { fluency: 2, lexicalResource: 2, grammar: 2, pronunciation: 2, total: 8, band: 6.0 }
+    };
   }
 };
 

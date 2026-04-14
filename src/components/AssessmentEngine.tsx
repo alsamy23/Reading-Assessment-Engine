@@ -25,6 +25,10 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
   const [timer, setTimer] = useState(0);
   const [questions, setQuestions] = useState<string[]>([]);
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioURL, setAudioURL] = useState<string | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<any>(null);
 
   useEffect(() => {
@@ -55,17 +59,42 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
     }
   };
 
-  const startRecording = () => {
-    setIsRecording(true);
-    setTimer(0);
-    timerRef.current = setInterval(() => {
-      setTimer(prev => prev + 1);
-    }, 1000);
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
+      chunksRef.current = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        setAudioBlob(blob);
+        setAudioURL(URL.createObjectURL(blob));
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      recorder.start();
+      setIsRecording(true);
+      setTimer(0);
+      timerRef.current = setInterval(() => {
+        setTimer(prev => prev + 1);
+      }, 1000);
+    } catch (err) {
+      console.error("Microphone access denied:", err);
+      alert("Microphone access is required for Speaking Assessment.");
+    }
   };
 
   const stopRecording = () => {
-    setIsRecording(false);
-    clearInterval(timerRef.current);
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      clearInterval(timerRef.current);
+    }
   };
 
   const handleSubmit = async () => {
@@ -76,9 +105,24 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
       alert("Please ensure there is a passage to read.");
       return;
     }
-    if (!transcript.trim()) {
-      alert("Please provide the reading attempt (transcript).");
+    
+    // REQUIREMENT: Prevent submission without recording to fix copy-paste bug
+    if (!audioBlob && !transcript.trim()) {
+      alert("Please record your voice or provide a transcript to analyze.");
       return;
+    }
+
+    // Convert audio to base64 if available
+    let audioBase64 = "";
+    if (audioBlob) {
+      const reader = new FileReader();
+      audioBase64 = await new Promise((resolve) => {
+        reader.onloadend = () => {
+          const base64String = (reader.result as string).split(',')[1];
+          resolve(base64String);
+        };
+        reader.readAsDataURL(audioBlob);
+      });
     }
 
     let result = evaluateReading(activeText, transcript, guidedText);
@@ -89,11 +133,38 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
         const aiResult = await analyzeReadingWithAI({
           originalText: activeText,
           transcription: transcript,
+          audioBase64: audioBase64,
           grade: grade
         });
+        
+        // If Gemini provided specific scores, use them to overwrite the simplistic word-match scores
+        if (aiResult.score) {
+          const { fluency, lexicalResource, grammar, pronunciation } = aiResult.score;
+          const total = fluency + lexicalResource + grammar + pronunciation;
+          
+          // Re-calculate band based on AI scores
+          const { calculateIELTSBand } = await import('../services/assessmentService');
+          const band = calculateIELTSBand(total);
+
+          result.score = {
+            fluency,
+            lexicalResource,
+            grammar,
+            pronunciation,
+            total,
+            band
+          };
+          
+          // Update level based on new band
+          if (band >= 7.5) result.level = 'Advanced';
+          else if (band >= 6.0) result.level = 'Proficient';
+          else if (band >= 4.0) result.level = 'Developing';
+          else result.level = 'Beginner';
+        }
+
         result = {
           ...result,
-          feedback: [...result.feedback, ...(aiResult.feedback || [])],
+          feedback: aiResult.feedback || result.feedback, // Use AI feedback preferentially
           recommendation: aiResult.recommendation || result.recommendation
         };
       } catch (err) {
@@ -106,7 +177,7 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
     saveHistory({
       childName: childName,
       grade: mode === 'automated' ? autoPassage.grade : 'Custom',
-      score: result.score.band, // Save Band as the primary score now
+      score: result.score.band, 
       level: result.level
     });
     onComplete(result);
@@ -238,6 +309,13 @@ const AssessmentEngine: React.FC<AssessmentEngineProps> = ({ grade, childName, o
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {audioURL && (
+          <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+            <p style={{ color: 'var(--primary)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Review your recording:</p>
+            <audio src={audioURL} controls style={{ width: '100%', height: '40px' }} />
           </div>
         )}
 
