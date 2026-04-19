@@ -8,135 +8,160 @@ const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
 export interface AIAnalysisRequest {
   originalText: string;
   transcription: string;
-  audioBase64?: string; // Optinal: the real audio for multimodal analysis
+  audioBase64?: string;
   grade: string;
 }
 
+// ─── Local fallback: score based on browser transcription ───────────────────
+const simulateFeedback = (transcription: string, originalText: string): Partial<AssessmentResult> => {
+  const orig = originalText.toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/).filter(Boolean);
+  const said = transcription.toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/).filter(Boolean);
+
+  if (said.length === 0) {
+    return {
+      score: { fluency: 1, lexicalResource: 1, grammar: 1, pronunciation: 1, total: 4, band: 3.0 },
+      feedback: [
+        "No speech was detected. Please ensure your microphone is working and try again.",
+        "Speak clearly and at a steady pace while reading the passage.",
+        "Make sure to read every sentence from start to finish.",
+        "Practice reading aloud daily to build confidence."
+      ],
+      recommendation: "Try again in a quiet room with your microphone working properly."
+    };
+  }
+
+  const matched = said.filter(w => orig.includes(w)).length;
+  const accuracy = orig.length > 0 ? matched / orig.length : 0;
+  const coverage = Math.min(1, said.length / orig.length);
+
+  const fluency = coverage > 0.9 ? 4 : coverage > 0.7 ? 3 : coverage > 0.4 ? 2 : 1;
+  const pronunciation = accuracy > 0.85 ? 4 : accuracy > 0.65 ? 3 : accuracy > 0.4 ? 2 : 1;
+  const lexicalResource = accuracy > 0.8 ? 4 : accuracy > 0.6 ? 3 : 2;
+  const grammar = accuracy > 0.75 ? 4 : accuracy > 0.55 ? 3 : 2;
+  const total = fluency + lexicalResource + grammar + pronunciation;
+  const band = calculateIELTSBand(total);
+
+  const feedback: string[] = [];
+  if (fluency < 3) feedback.push("Try to read more smoothly without long pauses between words.");
+  if (pronunciation < 3) feedback.push("Focus on pronouncing each word clearly, especially at the end of sentences.");
+  if (lexicalResource < 3) feedback.push("Make sure to read all the words in the passage, not just key ones.");
+  if (grammar < 3) feedback.push("Pay attention to sentence endings and punctuation while reading.");
+  if (feedback.length === 0) feedback.push("Excellent reading! Your pace and accuracy were very good.");
+
+  const recommendation =
+    band >= 7.5 ? "Challenge yourself with more complex passages." :
+    band >= 6.0 ? "Practice reading longer passages aloud to improve further." :
+    band >= 4.0 ? "Read simple texts every day to build fluency and confidence." :
+    "Start with short, simple sentences and practice until comfortable.";
+
+  return { score: { fluency, lexicalResource, grammar, pronunciation, total, band }, feedback, recommendation };
+};
+
 export const analyzeReadingWithAI = async (request: AIAnalysisRequest): Promise<Partial<AssessmentResult>> => {
   if (!genAI) {
-    console.warn("Gemini API Key missing. Using simulated feedback.");
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          feedback: [
-            "IELTS AI ANALYSIS: Speaker shows good fluency but relies on simple connectors.",
-            "LEXICAL RESOURCE: Vocabulary is appropriate, but needs more academic collocations.",
-            "GRAMMAR: Minor errors in subject-verb agreement detected.",
-            "PRONUNCIATION: Clear articulation; focus on sentence stress."
-          ],
-          recommendation: "Focus on using complex sentence structures to aim for Band 7.5+."
-        });
-      }, 1500);
-    });
+    // No Gemini key: use local scoring based on browser transcription
+    return simulateFeedback(request.transcription, request.originalText);
   }
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    
-    // Prepare parts for multimodal input
+
     const promptParts: any[] = [
       {
         text: `
-          You are an expert IELTS Speaking examiner. 
-          Listen to the provided AUDIO recording of the student reading the passage aloud.
-          Analyze this 'Read Aloud' attempt based on the official IELTS Public Band Descriptors.
-          
-          PASSAGE TO READ: "${request.originalText}"
-          LEVEL: ${request.grade}
-          
-          CRITICAL INSTRUCTION:
-          Compare the AUDIO recording directly against the 'PASSAGE TO READ'.
-          Carefully evaluate their Pronunciation, Fluency, and how accurately they read the text.
-          
-          NOISE CANCELLATION:
-          Identify the primary human speaker. Ignore background environmental noises like TV, street noise, wind, or other people talking in the distance. Focus ONLY on the clarity and linguistic features of the main speaker.
-          
-          If the audio does not match the text at all, or if the audio is silent, severely penalize the score.
-          
-          Provide scores (0-4 internal scale for each) and feedback for:
-          1. Fluency & Coherence (pacing, hesitations, self-correction)
-          2. Lexical Resource (vocabulary range)
-          3. Grammatical Range & Accuracy
-          4. Pronunciation (clarity, word stress, intonation)
-          
-          Return JSON format: 
-          {
-            "score": {
-              "fluency": number,
-              "lexicalResource": number,
-              "grammar": number,
-              "pronunciation": number
-            },
-            "feedback": ["detailed point 1", "detailed point 2", "detailed point 3", "detailed point 4"],
-            "recommendation": "string"
-          }
+You are an IELTS Speaking examiner assessing a student reading a passage aloud.
+
+PASSAGE: "${request.originalText}"
+GRADE/LEVEL: ${request.grade}
+BROWSER TRANSCRIPTION (what the student said): "${request.transcription || '(not available)'}"
+
+Listen to the audio recording and evaluate the student's reading. Compare the audio against the passage.
+Score on 4 criteria (0–4 each):
+1. Fluency & Coherence — steady pace, no long pauses, natural flow
+2. Lexical Resource — reads all words accurately
+3. Grammatical Range — reads sentences correctly with proper intonation
+4. Pronunciation — clear articulation, correct word stress
+
+Return ONLY valid JSON (no markdown, no extra text):
+{
+  "score": { "fluency": number, "lexicalResource": number, "grammar": number, "pronunciation": number },
+  "feedback": ["tip1", "tip2", "tip3", "tip4"],
+  "recommendation": "one actionable sentence"
+}
         `
       }
     ];
 
-    // Add audio if available
     if (request.audioBase64) {
-      promptParts.push({
-        inlineData: {
-          data: request.audioBase64,
-          mimeType: "audio/webm"
-        }
-      });
+      promptParts.push({ inlineData: { data: request.audioBase64, mimeType: "audio/webm" } });
     }
 
     const result = await model.generateContent(promptParts);
-    const response = await result.response;
-    const text = response.text().replace(/```json|```/g, "").trim();
-    const data = JSON.parse(text);
-    
-    return data;
+    const text = result.response.text().replace(/```json|```/g, "").trim();
+    return JSON.parse(text);
   } catch (err) {
     console.error("Gemini Analysis Error:", err);
-    return { 
-      feedback: ["Analysis currently unavailable."], 
-      recommendation: "Please try again shortly.",
-      score: { fluency: 2, lexicalResource: 2, grammar: 2, pronunciation: 2, total: 8, band: 6.0 }
-    };
+    // Fall back to local scoring
+    return simulateFeedback(request.transcription, request.originalText);
   }
 };
 
-export const generateComprehensionQuestions = async (text: string, grade: string): Promise<string[]> => {
+// ─── Passage-aware question generation ─────────────────────────────────────
+const generateQuestionsLocally = (text: string): string[] => {
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+  const questions: string[] = [];
+
+  // Q1: Main idea
+  questions.push(`What is the main topic of this passage about "${sentences[0].trim().slice(0, 40)}..."?`);
+
+  // Q2: Detail from sentence 2 or 3
+  if (sentences.length >= 2) {
+    const src = sentences[1].trim();
+    const words = src.replace(/[^a-zA-Z\s]/g, '').split(' ').filter(w => w.length > 4);
+    const keyword = words[Math.floor(words.length / 2)] || words[0] || 'it';
+    questions.push(`According to the passage, what do you learn about "${keyword}"?`);
+  }
+
+  // Q3: Personal connection
+  questions.push(`Can you describe one fact from this passage in your own words?`);
+
+  // Q4: From last sentence
+  if (sentences.length >= 3) {
+    const last = sentences[sentences.length - 1].trim();
+    questions.push(`The passage ends with: "${last.slice(0, 60)}..." — what does this tell us?`);
+  } else {
+    questions.push(`Why do you think this topic is important?`);
+  }
+
+  return questions;
+};
+
+export const generateComprehensionQuestionsLocal = async (text: string, grade: string): Promise<string[]> => {
   if (!genAI) {
-    console.warn("Gemini API Key missing. Using simulated passage-aware questions.");
-    // Even without Gemini, we should try to make it look passage-aware if possible, 
-    // but the actual goal is to use Gemini.
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const questionPool = [
-          `Summarize the main idea of this text.`,
-          `What details in the text support the title?`,
-          `Are there any difficult words in the text that you noticed?`,
-          `What is the most interesting part of this passage?`
-        ];
-        resolve(questionPool);
-      }, 1200);
-    });
+    // Local generation — passage-specific, not generic
+    return generateQuestionsLocally(text);
   }
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const prompt = `
-      Based EXCLUSIVELY on the reading passage below, generate 4 short comprehension questions to test a student's understanding.
-      The questions must be specific to the content mentioned in the text.
-      
-      PASSAGE: "${text}"
-      GRADE/LEVEL: ${grade}
-      
-      Return JSON format: ["Question 1", "Question 2", "Question 3", "Question 4"]
+Based EXCLUSIVELY on this reading passage, generate 4 comprehension questions for a ${grade} student.
+Each question must reference specific content, facts, or details from the passage.
+Do NOT generate generic questions. Make each question answerable only by reading this specific text.
+
+PASSAGE: "${text}"
+
+Return ONLY a JSON array of 4 question strings. No markdown, no extra text.
+Example format: ["Question 1?", "Question 2?", "Question 3?", "Question 4?"]
     `;
 
     const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const jsonText = response.text().replace(/```json|```/g, "").trim();
-    return JSON.parse(jsonText);
+    const jsonText = result.response.text().replace(/```json|```/g, "").trim();
+    const parsed = JSON.parse(jsonText);
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    return generateQuestionsLocally(text);
   } catch (err) {
     console.error("Gemini Question Generation Error:", err);
-    return ["What is the main topic of this passage?", "Can you describe a key detail from the text?"];
+    return generateQuestionsLocally(text);
   }
 };
-

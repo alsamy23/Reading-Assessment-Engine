@@ -1,18 +1,130 @@
 {
   "passages": [
-    { "id": "kg1", "grade": "KG1", "difficulty": "Medium", "title": "My Cat", "content": "I see a cat. The cat is fat. It is on the mat.", "tokens": ["I", "see", "a", "cat.", "The", "cat", "is", "fat.", "It", "is", "on", "the", "mat."], "chunks": ["I see a cat.", "The cat is fat.", "It is on the mat."], "guided": "I SEE / a CAT. / The CAT / is FAT. / It is / on the MAT." },
-    { "id": "kg2", "grade": "KG2", "difficulty": "Medium", "title": "The Sun", "content": "The sun is big. The sun is hot. It is yellow and bright.", "tokens": ["The", "sun", "is", "big.", "The", "sun", "is", "hot.", "It", "is", "yellow", "and", "bright."], "chunks": ["The sun is big.", "The sun is hot.", "It is yellow and bright."], "guided": "The SUN / is BIG. / The SUN / is HOT. / It is / YELLOW / and BRIGHT." },
-    { "id": "g1", "grade": "Grade 1", "difficulty": "Medium", "title": "A Day at the Park", "content": "I go to the park. I play on the slide. My friend is with me.", "tokens": ["I", "go", "to", "the", "park.", "I", "play", "on", "the", "slide.", "My", "friend", "is", "with", "me."], "chunks": ["I go to the park.", "I play on the slide.", "My friend is with me."], "guided": "I GO / to the PARK. / I PLAY / on the SLIDE. / My FRIEND / is with ME." },
-    { "id": "g2", "grade": "Grade 2", "difficulty": "Medium", "title": "The Brave Little Bird", "content": "A little bird wanted to fly high. She flapped her wings. She reached the top of the tree.", "tokens": ["A", "little", "bird", "wanted", "to", "fly", "high.", "She", "flapped", "her", "wings.", "She", "reached", "the", "top", "of", "the", "tree."], "chunks": ["A little bird / wanted to fly high.", "She flapped her wings.", "She reached the top / of the tree."], "guided": "A LITTLE bird / wanted to FLY HIGH. / She FLAPPED her wings. / She REACHED the top / of the TREE." },
-    { "id": "g3", "grade": "Grade 3", "difficulty": "Medium", "title": "Space Exploration", "content": "Astronauts travel into space. They visit the moon and stars. It is a long journey in a rocket.", "tokens": ["Astronauts", "travel", "into", "space.", "They", "visit", "the", "moon", "and", "stars.", "It", "is", "a", "long", "journey", "in", "a", "rocket."], "chunks": ["Astronauts travel / into space.", "They visit / the moon and stars.", "It is a long journey / in a rocket."], "guided": "ASTRONAUTS travel / into SPACE. / They VISIT / the MOON and STARS. / It is a LONG journey / in a ROCKET." },
-    { "id": "g4", "grade": "Grade 4", "difficulty": "Medium", "title": "The Great Wall", "content": "The Great Wall of China is very long. It was built thousands of years ago to protect the country.", "tokens": ["The", "Great", "Wall", "of", "China", "is", "very", "long.", "It", "was", "built", "thousands", "of", "years", "ago", "to", "protect", "the", "country."], "chunks": ["The Great Wall of China / is very long.", "It was built / thousands of years ago / to protect the country."], "guided": "The GREAT WALL of China / is VERY long. / It was BUILT / THOUSANDS of years ago / to PROTECT the country." },
-    { "id": "g5", "grade": "Grade 5", "difficulty": "Medium", "title": "Ocean Depths", "content": "The ocean is home to many creatures. Some live in the shallow water, while others dwell in the deep dark abyss.", "tokens": ["The", "ocean", "is", "home", "to", "many", "creatures.", "Some", "live", "in", "the", "shallow", "water,", "while", "others", "dwell", "in", "the", "deep", "dark", "abyss."], "chunks": ["The ocean is home / to many creatures.", "Some live / in the shallow water,", "while others dwell / in the deep dark abyss."], "guided": "The OCEAN is home / to MANY creatures. / SOME live / in the SHALLOW water, / while OTHERS dwell / in the DEEP DARK abyss." },
-    { "id": "g6", "grade": "Grade 6", "difficulty": "Medium", "title": "Ancient Civilizations", "content": "Egyptians built pyramids as tombs for their kings. These structures are some of the most impressive feats of engineering in history.", "tokens": ["Egyptians", "built", "pyramids", "as", "tombs", "for", "their", "kings.", "These", "structures", "are", "some", "of", "the", "most", "impressive", "feats", "of", "engineering", "in", "history."], "chunks": ["Egyptians built pyramids / as tombs for their kings.", "These structures are some / of the most impressive feats / of engineering in history."], "guided": "EGYPTIANS built pyramids / as TOMBS for their kings. / These STRUCTURES are some / of the MOST IMPRESSIVE feats / of ENGINEERING in history." },
-    { "id": "g7", "grade": "Grade 7", "difficulty": "Medium", "title": "The Renaissance", "content": "The Renaissance was a period of great cultural and artistic change in Europe. Artists like Leonardo da Vinci created timeless masterpieces.", "tokens": ["The", "Renaissance", "was", "a", "period", "of", "great", "cultural", "and", "artistic", "change", "in", "Europe.", "Artists", "like", "Leonardo", "da", "Vinci", "created", "timeless", "masterpieces."], "chunks": ["The Renaissance was a period / of great cultural and artistic change / in Europe.", "Artists like Leonardo da Vinci / created timeless masterpieces."], "guided": "The RENAISSANCE was a period / of GREAT CULTURAL and ARTISTIC change / in EUROPE. / ARTISTS like Leonardo da Vinci / created TIMELESS masterpieces." },
-    { "id": "g8", "grade": "Grade 8", "difficulty": "Medium", "title": "Industrial Revolution", "content": "The Industrial Revolution transformed societies by introducing machinery and factories. Itled to rapid urbanization and economic growth.", "tokens": ["The", "Industrial", "Revolution", "transformed", "societies", "by", "introducing", "machinery", "and", "factories.", "It", "led", "to", "rapid", "urbanization", "and", "economic", "growth."], "chunks": ["The Industrial Revolution / transformed societies / by introducing machinery and factories.", "It led to / rapid urbanization / and economic growth."], "guided": "The INDUSTRIAL Revolution / TRANSFORMED societies / by introducing MACHINERY and FACTORIES. / It LED to / RAPID urbanization / and ECONOMIC growth." },
-    { "id": "g9", "grade": "Grade 9", "difficulty": "Medium", "title": "The French Revolution", "content": "The French Revolution was a turning point in history that overthrew the monarchy. It established principles of liberty, equality, and fraternity.", "tokens": ["The", "French", "Revolution", "was", "a", "turning", "point", "in", "history", "that", "overthrew", "the", "monarchy.", "It", "established", "principles", "of", "liberty,", "equality,", "and", "fraternity."], "chunks": ["The French Revolution / was a turning point in history / that overthrew the monarchy.", "It established principles / of liberty, equality, and fraternity."], "guided": "The FRENCH Revolution / was a TURNING POINT in history / that OVERTHREW the monarchy. / It ESTABLISHED principles / of LIBERTY, EQUALITY, and FRATERNITY." },
-    { "id": "g10", "grade": "Grade 10", "difficulty": "Medium", "title": "Global Warming", "content": "Climate change is one of the most pressing challenges facing our planet today. Rising temperatures are causing glaciers to melt and sea levels to rise.", "tokens": ["Climate", "change", "is", "one", "of", "the", "most", "pressing", "challenges", "facing", "our", "planet", "today.", "Rising", "temperatures", "are", "causing", "glaciers", "to", "melt", "and", "sea", "levels", "to", "rise."], "chunks": ["Climate change / is one of the most pressing challenges / facing our planet today.", "Rising temperatures / are causing glaciers to melt / and sea levels to rise."], "guided": "CLIMATE change / is one of the MOST PRESSING challenges / facing our PLANET today. / RISING temperatures / are causing GLACIERS to melt / and SEA LEVELS to rise." },
-    { "id": "g11", "grade": "Grade 11", "difficulty": "Medium", "title": "The Art of Persuasion", "content": "Rhetoric is the ancient art of effective or persuasive speaking and writing. Mastering it allows individuals to influence public opinion and social change.", "tokens": ["Rhetoric", "is", "the", "ancient", "art", "of", "effective", "or", "persuasive", "speaking", "and", "writing.", "Mastering", "it", "allows", "individuals", "to", "influence", "public", "opinion", "and", "social", "change."], "chunks": ["Rhetoric is the ancient art / of effective or persuasive speaking and writing.", "Mastering it allows individuals / to influence public opinion / and social change."], "guided": "RHETORIC is the ANCIENT art / of EFFECTIVE or PERSUASIVE speaking and writing. / MASTERING it allows individuals / to INFLUENCE public opinion / and SOCIAL change." },
-    { "id": "g12", "grade": "Grade 12", "difficulty": "Medium", "title": "The Theory of Relativity", "content": "Einstein's general theory of relativity revolutionized our understanding of space and time. It describes gravity as a curvature of spacetime caused by mass and energy.", "tokens": ["Einstein's", "general", "theory", "of", "relativity", "revolutionized", "our", "understanding", "of", "space", "and", "time.", "It", "describes", "gravity", "as", "a", "curvature", "of", "spacetime", "caused", "by", "mass", "and", "energy."], "chunks": ["Einstein's general theory of relativity / revolutionized our understanding of space and time.", "It describes gravity / as a curvature of spacetime / caused by mass and energy."], "guided": "EINSTEIN'S general theory of RELATIVITY / REVOLUTIONIZED our understanding of SPACE and TIME. / It DESCRIBES gravity / as a CURVATURE of SPACETIME / caused by MASS and ENERGY." }
+    {
+      "id": "kg1",
+      "grade": "KG1",
+      "difficulty": "Easy",
+      "title": "My Pet Cat",
+      "content": "I have a cat. My cat is soft. She likes to play. I love my cat.",
+      "guided": "I HAVE a cat. My CAT is soft. She LIKES to play. I LOVE my cat.",
+      "chunks": ["I have a cat.", "My cat is soft.", "She likes to play.", "I love my cat."]
+    },
+    {
+      "id": "kg2",
+      "grade": "KG2",
+      "difficulty": "Easy",
+      "title": "The Big Sun",
+      "content": "The sun shines bright. It lights up the sky. The flowers grow tall. The birds sing loud.",
+      "guided": "The SUN shines BRIGHT. It LIGHTS up the sky. The FLOWERS grow TALL. The BIRDS sing LOUD.",
+      "chunks": ["The sun shines bright.", "It lights up the sky.", "The flowers grow tall.", "The birds sing loud."]
+    },
+    {
+      "id": "g1",
+      "grade": "Grade 1",
+      "difficulty": "Easy",
+      "title": "A Day at the Park",
+      "content": "I go to the park. I run and jump. My friend plays with me. We eat ice cream. It is a fun day.",
+      "guided": "I GO to the PARK. I RUN and JUMP. My FRIEND plays with me. We EAT ice CREAM. It is a FUN day.",
+      "chunks": ["I go to the park.", "I run and jump.", "My friend plays with me.", "We eat ice cream.", "It is a fun day."]
+    },
+    {
+      "id": "g2",
+      "grade": "Grade 2",
+      "difficulty": "Easy",
+      "title": "The Brave Little Bird",
+      "content": "A little bird sat on a tree. She saw the big blue sky. She spread her wings and flew up high. She was brave and free. The wind carried her far away.",
+      "guided": "A LITTLE bird sat on a TREE. She saw the BIG blue SKY. She SPREAD her wings and FLEW up HIGH. She was BRAVE and FREE. The WIND carried her FAR away.",
+      "chunks": ["A little bird sat on a tree.", "She saw the big blue sky.", "She spread her wings and flew up high.", "She was brave and free.", "The wind carried her far away."]
+    },
+    {
+      "id": "g3",
+      "grade": "Grade 3",
+      "difficulty": "Medium",
+      "title": "Exploring Space",
+      "content": "Astronauts travel into outer space. They wear special suits to breathe. They see the Earth from far away. The stars look bright and beautiful. Space is a mysterious and exciting place.",
+      "guided": "ASTRONAUTS travel into OUTER space. They wear SPECIAL suits to BREATHE. They see the EARTH from FAR away. The STARS look BRIGHT and BEAUTIFUL. Space is a MYSTERIOUS and EXCITING place.",
+      "chunks": ["Astronauts travel into outer space.", "They wear special suits to breathe.", "They see the Earth from far away.", "The stars look bright and beautiful.", "Space is a mysterious and exciting place."]
+    },
+    {
+      "id": "g4",
+      "grade": "Grade 4",
+      "difficulty": "Medium",
+      "title": "The Great Wall of China",
+      "content": "The Great Wall of China stretches for thousands of miles. It was built over many centuries by millions of workers. The wall helped protect the country from enemies. Visitors from all over the world come to see it. It is one of the greatest wonders ever built by humans.",
+      "guided": "The GREAT Wall of China STRETCHES for thousands of MILES. It was built over MANY centuries by MILLIONS of workers. The WALL helped PROTECT the country from ENEMIES. VISITORS from all over the world come to SEE it. It is one of the GREATEST wonders ever BUILT by humans.",
+      "chunks": ["The Great Wall of China stretches for thousands of miles.", "It was built over many centuries by millions of workers.", "The wall helped protect the country from enemies.", "Visitors from all over the world come to see it.", "It is one of the greatest wonders ever built by humans."]
+    },
+    {
+      "id": "g5",
+      "grade": "Grade 5",
+      "difficulty": "Medium",
+      "title": "The Deep Ocean",
+      "content": "The ocean covers more than half of our planet. Beneath its surface lies a world full of mystery. Strange and colorful creatures live in the deep dark water. Some fish glow in the dark to find their way. Scientists are still discovering new life forms in the ocean every year.",
+      "guided": "The OCEAN covers more than HALF of our PLANET. Beneath its SURFACE lies a world full of MYSTERY. Strange and COLORFUL creatures live in the DEEP dark water. Some FISH glow in the DARK to find their WAY. Scientists are still DISCOVERING new LIFE forms in the ocean every YEAR.",
+      "chunks": ["The ocean covers more than half of our planet.", "Beneath its surface lies a world full of mystery.", "Strange and colorful creatures live in the deep dark water.", "Some fish glow in the dark to find their way.", "Scientists are still discovering new life forms in the ocean every year."]
+    },
+    {
+      "id": "g6",
+      "grade": "Grade 6",
+      "difficulty": "Medium",
+      "title": "Ancient Egypt",
+      "content": "The ancient Egyptians were one of the earliest great civilizations. They built massive pyramids as tombs for their pharaohs. Skilled workers carved enormous stones and stacked them with great precision. The Nile River provided water and fertile soil for their farms. Their writing system, called hieroglyphics, recorded their history for thousands of years.",
+      "guided": "The ANCIENT Egyptians were one of the EARLIEST great CIVILIZATIONS. They built MASSIVE pyramids as TOMBS for their PHARAOHS. Skilled WORKERS carved ENORMOUS stones and stacked them with great PRECISION. The NILE River provided water and FERTILE soil for their FARMS. Their WRITING system, called HIEROGLYPHICS, recorded their HISTORY for thousands of YEARS.",
+      "chunks": ["The ancient Egyptians were one of the earliest great civilizations.", "They built massive pyramids as tombs for their pharaohs.", "Skilled workers carved enormous stones and stacked them with great precision.", "The Nile River provided water and fertile soil for their farms.", "Their writing system, called hieroglyphics, recorded their history for thousands of years."]
+    },
+    {
+      "id": "g7",
+      "grade": "Grade 7",
+      "difficulty": "Medium",
+      "title": "The Renaissance Period",
+      "content": "The Renaissance was a remarkable period of cultural rebirth in Europe. Artists, scientists, and thinkers challenged old ideas and explored new ones. Leonardo da Vinci painted masterpieces and designed flying machines centuries before they existed. Galileo used a telescope to study the planets and stars. This era of discovery changed the way humans understood themselves and the universe.",
+      "guided": "The RENAISSANCE was a REMARKABLE period of CULTURAL rebirth in Europe. ARTISTS, scientists, and thinkers CHALLENGED old ideas and EXPLORED new ones. Leonardo da VINCI painted MASTERPIECES and designed FLYING machines centuries before they EXISTED. Galileo used a TELESCOPE to study the PLANETS and stars. This ERA of DISCOVERY changed the way HUMANS understood themselves and the UNIVERSE.",
+      "chunks": ["The Renaissance was a remarkable period of cultural rebirth in Europe.", "Artists, scientists, and thinkers challenged old ideas and explored new ones.", "Leonardo da Vinci painted masterpieces and designed flying machines centuries before they existed.", "Galileo used a telescope to study the planets and stars.", "This era of discovery changed the way humans understood themselves and the universe."]
+    },
+    {
+      "id": "g8",
+      "grade": "Grade 8",
+      "difficulty": "Medium",
+      "title": "The Industrial Revolution",
+      "content": "The Industrial Revolution transformed the way people lived and worked across the world. Factories replaced hand-crafted production with powerful machines. Steam engines powered ships, trains, and mills at unprecedented speeds. Cities grew rapidly as workers moved from the countryside seeking employment. While prosperity increased for many, harsh working conditions remained a serious challenge for factory laborers.",
+      "guided": "The INDUSTRIAL Revolution TRANSFORMED the way people LIVED and worked across the WORLD. FACTORIES replaced hand-crafted PRODUCTION with powerful MACHINES. STEAM engines powered ships, TRAINS, and mills at UNPRECEDENTED speeds. CITIES grew RAPIDLY as workers moved from the COUNTRYSIDE seeking EMPLOYMENT. While PROSPERITY increased for many, HARSH working conditions remained a SERIOUS challenge for factory LABORERS.",
+      "chunks": ["The Industrial Revolution transformed the way people lived and worked across the world.", "Factories replaced hand-crafted production with powerful machines.", "Steam engines powered ships, trains, and mills at unprecedented speeds.", "Cities grew rapidly as workers moved from the countryside seeking employment.", "While prosperity increased for many, harsh working conditions remained a serious challenge for factory laborers."]
+    },
+    {
+      "id": "g9",
+      "grade": "Grade 9",
+      "difficulty": "Hard",
+      "title": "The French Revolution",
+      "content": "The French Revolution stands as one of the most dramatic political upheavals in modern history. Fueled by poverty, inequality, and resentment toward the monarchy, ordinary citizens rose up to demand change. The rallying cry of liberty, equality, and fraternity inspired revolutions across continents. King Louis the Sixteenth was overthrown, and a new republic was declared in his place. The revolution reshaped political thought and planted the seeds of modern democracy worldwide.",
+      "guided": "The FRENCH Revolution stands as one of the most DRAMATIC political UPHEAVALS in MODERN history. Fueled by POVERTY, inequality, and RESENTMENT toward the MONARCHY, ordinary CITIZENS rose up to demand CHANGE. The rallying cry of LIBERTY, equality, and FRATERNITY inspired REVOLUTIONS across CONTINENTS. King Louis the Sixteenth was OVERTHROWN, and a new REPUBLIC was declared in his PLACE. The revolution RESHAPED political THOUGHT and planted the SEEDS of modern DEMOCRACY worldwide.",
+      "chunks": ["The French Revolution stands as one of the most dramatic political upheavals in modern history.", "Fueled by poverty, inequality, and resentment toward the monarchy, ordinary citizens rose up to demand change.", "The rallying cry of liberty, equality, and fraternity inspired revolutions across continents.", "King Louis the Sixteenth was overthrown, and a new republic was declared in his place.", "The revolution reshaped political thought and planted the seeds of modern democracy worldwide."]
+    },
+    {
+      "id": "g10",
+      "grade": "Grade 10",
+      "difficulty": "Hard",
+      "title": "Climate Change",
+      "content": "Climate change represents one of the most urgent challenges confronting humanity today. The burning of fossil fuels releases carbon dioxide and other greenhouse gases into the atmosphere. These gases trap heat from the sun and cause global temperatures to rise steadily. Glaciers are melting, sea levels are rising, and extreme weather events are becoming more frequent. Scientists warn that without immediate and decisive action, the consequences for future generations will be severe and irreversible.",
+      "guided": "CLIMATE change represents one of the most URGENT challenges CONFRONTING humanity TODAY. The BURNING of FOSSIL fuels releases CARBON dioxide and other GREENHOUSE gases into the ATMOSPHERE. These gases TRAP heat from the sun and cause GLOBAL temperatures to RISE steadily. GLACIERS are MELTING, sea LEVELS are rising, and EXTREME weather events are becoming more FREQUENT. Scientists WARN that without IMMEDIATE and DECISIVE action, the CONSEQUENCES for FUTURE generations will be SEVERE and IRREVERSIBLE.",
+      "chunks": ["Climate change represents one of the most urgent challenges confronting humanity today.", "The burning of fossil fuels releases carbon dioxide and other greenhouse gases into the atmosphere.", "These gases trap heat from the sun and cause global temperatures to rise steadily.", "Glaciers are melting, sea levels are rising, and extreme weather events are becoming more frequent.", "Scientists warn that without immediate and decisive action, the consequences for future generations will be severe and irreversible."]
+    },
+    {
+      "id": "g11",
+      "grade": "Grade 11",
+      "difficulty": "Hard",
+      "title": "The Art of Rhetoric",
+      "content": "Rhetoric, the ancient art of persuasive communication, has shaped societies and civilizations since the time of ancient Greece. Skilled orators could move crowds, sway governments, and alter the course of history through the power of words alone. Aristotle identified three fundamental pillars of persuasion: ethos, the appeal to credibility; pathos, the appeal to emotion; and logos, the appeal to logic and reason. In the modern era, rhetoric appears everywhere from political speeches to advertising campaigns. Understanding its principles empowers individuals to critically evaluate the messages they encounter every day.",
+      "guided": "RHETORIC, the ANCIENT art of PERSUASIVE communication, has SHAPED societies and CIVILIZATIONS since the time of ancient GREECE. Skilled ORATORS could MOVE crowds, SWAY governments, and ALTER the course of HISTORY through the POWER of words ALONE. Aristotle IDENTIFIED three FUNDAMENTAL pillars of PERSUASION: ETHOS, the appeal to CREDIBILITY; PATHOS, the appeal to EMOTION; and LOGOS, the appeal to LOGIC and REASON. In the MODERN era, rhetoric APPEARS everywhere from POLITICAL speeches to ADVERTISING campaigns. UNDERSTANDING its PRINCIPLES empowers individuals to CRITICALLY evaluate the MESSAGES they ENCOUNTER every day.",
+      "chunks": ["Rhetoric, the ancient art of persuasive communication, has shaped societies and civilizations since the time of ancient Greece.", "Skilled orators could move crowds, sway governments, and alter the course of history through the power of words alone.", "Aristotle identified three fundamental pillars of persuasion: ethos, the appeal to credibility; pathos, the appeal to emotion; and logos, the appeal to logic and reason.", "In the modern era, rhetoric appears everywhere from political speeches to advertising campaigns.", "Understanding its principles empowers individuals to critically evaluate the messages they encounter every day."]
+    },
+    {
+      "id": "g12",
+      "grade": "Grade 12",
+      "difficulty": "Hard",
+      "title": "Theory of Relativity",
+      "content": "Einstein's theory of relativity fundamentally altered humanity's understanding of space, time, and the nature of the universe itself. The special theory demonstrated that the speed of light remains constant regardless of the observer's motion, leading to the startling conclusion that time passes more slowly for objects moving at high velocity. The general theory extended these ideas to include gravity, describing it not as a force but as a curvature of spacetime caused by massive objects. These radical propositions were confirmed by experimental observations and have underpinned virtually every major advance in physics since the twentieth century. From GPS satellites to black holes, Einstein's legacy continues to shape modern science in profound and practical ways.",
+      "guided": "Einstein's THEORY of RELATIVITY fundamentally ALTERED humanity's understanding of SPACE, time, and the NATURE of the universe ITSELF. The SPECIAL theory DEMONSTRATED that the SPEED of light remains CONSTANT regardless of the OBSERVER'S motion, leading to the STARTLING conclusion that TIME passes more SLOWLY for objects MOVING at HIGH velocity. The GENERAL theory EXTENDED these ideas to include GRAVITY, describing it not as a FORCE but as a CURVATURE of SPACETIME caused by MASSIVE objects. These RADICAL propositions were CONFIRMED by experimental OBSERVATIONS and have UNDERPINNED virtually every MAJOR advance in PHYSICS since the TWENTIETH century. From GPS SATELLITES to BLACK holes, Einstein's LEGACY continues to SHAPE modern SCIENCE in PROFOUND and practical WAYS.",
+      "chunks": ["Einstein's theory of relativity fundamentally altered humanity's understanding of space, time, and the nature of the universe itself.", "The special theory demonstrated that the speed of light remains constant regardless of the observer's motion, leading to the startling conclusion that time passes more slowly for objects moving at high velocity.", "The general theory extended these ideas to include gravity, describing it not as a force but as a curvature of spacetime caused by massive objects.", "These radical propositions were confirmed by experimental observations and have underpinned virtually every major advance in physics since the twentieth century.", "From GPS satellites to black holes, Einstein's legacy continues to shape modern science in profound and practical ways."]
+    }
   ]
 }

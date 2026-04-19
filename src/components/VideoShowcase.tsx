@@ -5,7 +5,7 @@ const DEFAULT_VIDEO = "/VID-20260409-WA0007.mp4";
 export default function VideoShowcase() {
   const [videoSrc, setVideoSrc] = useState(DEFAULT_VIDEO);
   const [videoLoaded, setVideoLoaded] = useState(false);
-  const [shareUrl, setShareUrl] = useState("");
+  const [_shareUrl, setShareUrl] = useState<string>("");
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
